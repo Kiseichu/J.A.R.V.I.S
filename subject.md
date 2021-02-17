@@ -1,4 +1,4 @@
-# How to create J.A.R.V.i.S
+# How to create J.A.R.V.I.S
 
 ## Description
 
