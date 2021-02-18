@@ -2,11 +2,12 @@
 
 ## Description
 
-Vous avez déjà entendue parler de la fameuse artificielle intelligente *J.A.R.V.I.S*.
+Vous avez déjà entendue parler de la fameuse artificielle intelligente **J.A.R.V.I.S** dans
+le film Iron-man.
 
 Aujourd'hui dans ce workshop vous allez apprendre a récréer cette intelligence artificielle.
 
-Tous ce passeras sur la platform Windows 10 avec python et quelque autre module.
+Tous ce passeras sur la platforme Windows 10 avec python et quelque autre module.
 
 ## Step 1
 
@@ -237,7 +238,8 @@ Encore une étape facile n'est-ce-pas ?
 
 ## Step 7
 
-Encore une étape facile vous inquiéter pas !! on vas jouer de la musique a partir d'un dossier toujours avec le module : **os**.
+Encore une étape facile vous inquiéter pas !! on vas jouer de la musique a partir 
+d'un dossier toujours avec le module : **os**.
 
 Vous allez avoir besoin du chemin de votre fichier de musique qu'il faudra mettre dans une variable.
 Vous allez pour cela rajouter encore dans votre main:
@@ -250,7 +252,6 @@ Vous allez pour cela rajouter encore dans votre main:
             os.startfile(os.path.join(song_path, song_list[i]))
 
 Et voila pour la musique. Encore trop simple n'est ce pas.
-
 
 ## Step 8
 
@@ -310,7 +311,7 @@ fonction suivantes:
     def infocomputer():
     # lvlProc qui est le poucentage de batterie
     lvlProc = str(psutil.cpu_percent())
-    speak(lvlProc+"Poucentage utiliser par le prcesseur")
+    speak(lvlProc+"Poucentage utiliser par le processeur")
     # lvlbat qui correspond au pourcentage de batterie
     lvlbat = str(psutil.sensors_battery().percent)
     speak(lvlbat + "pourcent de batterie")
