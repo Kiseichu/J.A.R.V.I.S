@@ -1,20 +1,16 @@
 #!/bin/python3
-import smtplib, ssl, wikipedia, pyttsx3, datetime, os
+import wikipedia, pyttsx3, datetime, os
 import speech_recognition as sr
 import webbrowser as wb
 import pyautogui, psutil
 from dt import date, timeh
 
-smtp_mail = 'smtp.gmail.com'
-smtp_port = 586
-
-email_adress = 'thecollonelz@gmail.com'
-email_passwd = '***************'
-
 Ai_name = "Guideon"
+fr_id = "french"
 
 def speak(audio):
     engine = pyttsx3.init()
+    engine.setProperty('voice', fr_id)
     engine.say(audio)
     engine.runAndWait()
 
@@ -56,18 +52,6 @@ def wikiped(request):
         speak("Pas d'internet")
         return 84
 
-def mail(box):
-    with smtplib.SMTP(smtp_mail, smtp_port) as server:
-        server.starttls()
-        server.login(email_adress, email_passwd)
-        try:
-            server.sendmail(email_adress, 'hadjeekhadafi@outlook.com', box)
-            speak("Email envoyer !")
-        except Exception as e:
-            print(e)
-            speak("Email refusé !")
-        server.close()
-
 def capture():
     image = pyautogui.screenshot()
     image.save("C:\\Users\\hadje\\Documents\\Jarvis\\J.A.R.V.I.S\\cap.png")
@@ -79,8 +63,8 @@ def infocomputer():
     speak(lvlbat + "pourcent de batterie")
 
 def main():
-    #helloh()
-    speak("Formulez votre demande ..."),
+    helloh()
+    speak("thanks to you to answer ..."),
     while True:
         req = commande().lower()
         if ("heure" in req):
