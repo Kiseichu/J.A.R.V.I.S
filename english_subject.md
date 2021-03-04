@@ -12,6 +12,7 @@ All this will with python and some other modules.
 ## Installion
 
 For the installation in your terminal you nedd to tap:
+
     pyenv venv .
     sudo dnf install python-devel espeak portaudio portaudio-devel
     touch requirement.txt
