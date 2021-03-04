@@ -24,6 +24,7 @@ In *requirement.txt* you need to tap every module you need for exemple:
     speechrecognition
 
 After:
+
     source bin/activate
     sudo pip install -r requirement.txt
 
