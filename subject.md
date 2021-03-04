@@ -84,80 +84,65 @@ Avec tous vous pouvez enfin parler un *Jarvis*.
 Dans cette step on vas rien apprendre de plus juste on vas réorganiser notre 
 code avec un main:
 
-    #!/bin/python3
-    import pyttsx3
-    import datetime
-    import speech_recognition as sr
+#!/bin/python3
 
-    # La fontion qui permet de parler
-    def speak(audio):
-        engine = pyttsx3.init()
-        engine.say(audio)
-        engine.runAndWait()
+#Import for step 1
+import playsound, tempfile, gtts
+#Import for step 2
+import datetime, time
+#Import for step 3
+import speech_recognition, locale
+#Import for step 4
+import wikipedia
 
-    # La fonction qui donne l'heure
-    def timeh():
-    h = datetime.datetime.now().strftime('%I:%M')
-    hour = int(datetime.datetime.now().hour)
-    speak(h)
-    if (hour >= 0 and hour <= 12):
-        speak("du matin")
-    else:
-        speak("de l'aprem")
-    
-    # La fonction qui donne la date
-    def date():
-    year = int(datetime.datetime.now().year)
-    month = int(datetime.datetime.now().month)
-    dayn = int(datetime.datetime.now().day)
+Ai_name = "Guideon"
 
-    speak(dayn)
-    speak(month)
-    speak(year)
+def say(audio):
+    speech = gtts.gTTS(text=audio, lang="fr")
+    tmp = tempfile.NamedTemporaryFile()
+    speech.write_to_fp(tmp.file)
+    playsound.playsound(tmp.name)
+    tmp.close()
 
-    # Une petite fonction de salution
-    def helloh():
-    speak("Salut on est le ")
-    date()
-    speak('a')
-    time()
-
-    # La fonction qui permet de récupérer la voix
-    def rec_voice():
-        r = sr.Recognizer()
-
-        with sr.Microphone() as source:
-            speak("Donnez moi un ordre ...")
-            r.pause_threshold = 1
-            r.energy_threshold = 5400
-            voice = r.listen(source)
-            # Avec tout sa sa vas nous permettre de recupérer notre voix
+def rec_voice():
+    say("Je vous ecoute ...")
+    rec = speech_recognition.Recognizer()
+    with speech_recognition.Microphone() as source:
+        print("Recording")
+        rec.pause_threshold = 1
+        rec.energy_threshold = 5400
+        voice = rec.listen(source)
         try:
-            request = r.recognize_google(voice, language='fr-FR')
-            print(request)
-        except Exception as e:
-            print(e)
-            speak("Je n'ai pas compris votre demande reformulez la ...")
-            return 'None'
-        return request
-    
-    # La fonction principale
-    def main():
-    helloh()
+            result = rec.recognize_google(voice, language='fr_FR')
+        except:
+            say("Je n'ai pas compris Idiot")
+            print("No result")
+            result = None
+        return result
 
+def rec_loop():
+    result = None
+    while result == None:
+        result = rec_voice()
+        time.sleep(1)
+    return result.lower()
+
+def say_date():
+    locale.setlocale(locale.LC_TIME, "fr_FR")
+    current_date = datetime.datetime.now().strftime("%A %d %B %Y %H:%M")
+    say(current_date)
+
+if __name__ == "__main__":
+    say("Bonjour capitaine !")
     while True:
-        request = rec_voice().lower()
-        # Ce if chercher si dans request il y a heure
-        if ("heure" in request):
-            timeh()
-        elif ("date" in req):
-            date()
-        elif ("fermer" in req):
-            exit()
-    
-    # Ici on définie la fonction principal qui est le main
-    if (__name == "__main__"):
-        main()
+        result = rec_loop()
+        word_array = result.split()
+        print(word_array)
+        if (word_array[0] == "fermer"):
+            exit(0)
+        elif (word_array[0] == "date"):
+            say_date()
+
 
 Voià maintenant que votre code est réorganiser on vas pouvoir passer 
 a la suite.

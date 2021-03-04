@@ -2,21 +2,27 @@
 
 import pyttsx3
 import datetime
+import gtts, tempfile, playsound
 
 def speak(audio):
-    engine = pyttsx3.init()
-    engine.say(audio)
-    engine.runAndWait()
+    speech = gtts.gTTS(text=audio, lang="fr")
+    tmp = tempfile.NamedTemporaryFile()
+    speech.write_to_fp(tmp.file)
+    playsound.playsound(tmp.name)
+    tmp.close()
 
 def timeh():
     h = datetime.datetime.now().strftime('%I:%M')
-    hour = int(datetime.datetime.now().hour)
+    hour = str(int(datetime.datetime.now().hour))
 
     speak(h)
+    hour = int(datetime.datetime.now().hour)
     if (hour >= 0 and hour <= 12):
         speak("du matin")
-    else:
+    elif (hour <= 19):
         speak("de l'aprem")
+    else:
+        speak("Du soir")
 
 def weekday(week):
     if (week == 0):
@@ -62,11 +68,21 @@ def monthname(monthnm):
 
 def date():
     year = int(datetime.datetime.now().year)
-    month = int(datetime.datetime.now().month)
+    month = int(datetime.datetime.now().month())
     dayn = int(datetime.datetime.now().day)
     day = int(datetime.datetime.now().weekday())
 
+    dayn = str(dayn)
     weekday(day)
-    speak(dayn)
+    print("je suis pas encore stupide")
+    print("Je suis stupide")
     monthname(month)
     speak(year)
+
+def helloh():
+    speak("Bonjour Capitaine !" + "On est le ")
+    print("lol")
+    date()
+    print("lol")
+    speak("à")
+    timeh()

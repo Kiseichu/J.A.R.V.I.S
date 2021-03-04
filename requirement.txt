@@ -4,3 +4,5 @@ pyautogui
 psutil
 speechrecognition
 pyaudio
+gtts
+playsound

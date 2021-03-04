@@ -1,117 +1,134 @@
 #!/bin/python3
-import wikipedia, pyttsx3, datetime, os
-import speech_recognition as sr
+#Import for step 1
+import playsound, tempfile, gtts
+#Import for step 2
+import datetime, time
+#Import for step 3
+import speech_recognition, locale
+#Import for step 4
+import wikipedia
+#import for step 5
 import webbrowser as wb
-import pyautogui, psutil
-from dt import date, timeh
+#Import for step 6
+import os
+#Import for Step 8
+import psutil
 
 Ai_name = "Guideon"
-fr_id = "french"
 
-def speak(audio):
-    engine = pyttsx3.init()
-    engine.setProperty('voice', fr_id)
-    engine.say(audio)
-    engine.runAndWait()
+def say(audio):
+    speech = gtts.gTTS(text=audio, lang="fr")
+    tmp = tempfile.NamedTemporaryFile()
+    speech.write_to_fp(tmp.file)
+    playsound.playsound(tmp.name)
+    tmp.close()
 
-def helloh():
-    speak("Bonjour Capitaine !")
-    speak("on est le ")
-    date()
-    speak('a')
-    timeh()
+def rec_voice():
+    rec = speech_recognition.Recognizer()
+    with speech_recognition.Microphone() as source:
+        print("Recording")
+        rec.pause_threshold = 1
+        rec.energy_threshold = 5400
+        voice = rec.listen(source)
+        try:
+            result = rec.recognize_google(voice, language='fr_FR')
+        except:
+            say("Je n'ai pas compris Idiot")
+            print("No result")
+            result = None
+        return result
 
-def commande():
-    r = sr.Recognizer()
+def rec_loop():
+    result = None
+    while result == None:
+        result = rec_voice()
+        time.sleep(1)
+    return result.lower()
 
-    with sr.Microphone() as source:
-        print("Donner moi un ordre")
-        r.pause_threshold = 1
-        r.energy_threshold = 5400
-        aud = r.listen(source)
-    try:
-        print("Ecoute....")
-        requete = r.recognize_google(aud, language='fr-FR')
-        print(requete)
-    except Exception as e:
-        print(e)
-        speak("S'il vou plait répétez votre commande ...")
-        return 'None'
-    return requete
+def say_date():
+    locale.setlocale(locale.LC_TIME, "fr_FR")
+    current_date = datetime.datetime.now().strftime("%A %d %B %Y %H:%M")
+    say(current_date)
 
 def wikiped(request):
-    speak("Recherche en cours ...")
+    say("Recherche en cours ...")
     if (request == ""):
-        speak ("Rien pour wikpéddia")
-        return 84
+        say("Rien pour wikipedia")
+        return
     wikipedia.set_lang("fr")
     try:
         res = wikipedia.summary(request, sentences=2)
-        speak(res)
-    except wikipedia.PageError:
-        speak("Pas d'internet")
-        return 84
+        say(res)
+    except:
+        say("Erreur 404")
+        return
 
-def capture():
-    image = pyautogui.screenshot()
-    image.save("C:\\Users\\hadje\\Documents\\Jarvis\\J.A.R.V.I.S\\cap.png")
+def system_interaction(result):
+    if (result == "verrouiller"):
+        say("Vérouillage de l'ordinateur en cours ...")
+        os.system("qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock")
+    elif (result == "arrêter"):
+        say("Arret system")
+        os.system("poweroff")
+    elif(result == "redémarrer"):
+        say("Redémarage en cours ...")
+        os.system("shutdown -r -t 0")
+
+def play_musique():
+    song_path = "/home/khadafi/Music"
+    song_list = os.listdir(song_path)
+    for i in range(len(song_list)):
+        os.system("mpg123 " + os.path.join(song_path, song_list[i]))
+
+def write_note():
+    say("Que voulez vous retenir ?")
+    rappel = rec_voice()
+    say("Vous m'avez demander de retenir :" + rappel)
+    y_n = rec_voice()
+    filetxt = open("./save/note.txt", "w")
+    filetxt.write(rappel)
+    filetxt.close()
+
+def read_note():
+    filetxt = open("./save/note.txt", "r")
+    say("Vous m'avez demander de retenir :")
+    say(filetxt.read())
 
 def infocomputer():
     lvlProc = str(psutil.cpu_percent())
-    speak(lvlProc+"Poucentage utiliser par le prcesseur")
+    say(lvlProc+"Poucentage utiliser par le processeur")
     lvlbat = str(psutil.sensors_battery().percent)
-    speak(lvlbat + "pourcent de batterie")
+    say(lvlbat + "pourcent de batterie")
 
-def main():
-    helloh()
-    speak("thanks to you to answer ..."),
+if __name__ == "__main__":
+    say("Bonjour capitaine !")
     while True:
-        req = commande().lower()
-        if ("heure" in req):
-            timeh()
-        elif ("date" in req):
-            date()
-        elif ("fermer" in req):
-            exit()
-        elif ("wikipédia" in req):
-            req = req.replace("wikipédia", "")
-            if (wikiped(req) == 84):
-                continue
-        elif ("ferme ta gueule" in req):
-            speak("pas besoin d'autant de violence")
+        say("Je vous écoute ...")
+        result = rec_loop()
+        word_array = result.split()
+        print(word_array)
+        if (word_array[0] == "fermer"):
             exit(0)
-        elif ("internet" in req):
-            speak("Donne moi l'adresse du site internet")
-            lien = commande()
-            chemin = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s"
-            wb.get(chemin).open_new_tab(lien)
-        elif ("déconnecter" in req):
-            os.system("shutdown -l")
-        elif ("arrêter l'ordinateur" in req):
-            os.system("shutdown -s -t 0")
-        elif ("redémarrer" in req):
-            os.system("shutdown -r -t 0")
-        elif ("musique" in req):
-            song_path = "C:/Users/hadje/Music"
-            song_list = os.listdir(song_path)
-            for i in range(len(song_list)):
-                os.startfile(os.path.join(song_path, song_list[i]))
-        elif ("noter" in req):
-            speak("Que faut t-il retenir pour vous ?")
-            rappel = commande()
-            speak("Vous m'avez demander de retenir :" + rappel)
-            filetxt = open("note.txt", 'w')
-            filetxt.write(rappel)
-            filetxt.close()
-        elif ("lire" in req):
-            filetxt = open("note.txt", 'r')
-            speak("Vous m'avez demander de retenir :")
-            speak(filetxt.read())
-        elif ("capture d'écran" in req):
-            capture()
-            speak("La capture d'écran est términer")
-        elif ("système" in req):
+        elif (word_array[0] == "date"):
+            say_date()
+        elif (word_array[0] == "c'est" and (word_array[1] == "quoi" or word_array[1] == "qui")):
+            wikiped(word_array[2])
+        elif (word_array[0] == "internet"):
+            say("Le site sur lequelle vous voulez allez ...")
+            link = rec_voice()
+            google_path = "/usr/bin/google-chrome %s"
+            wb.get(google_path).open_new_tab(link)            
+        elif (word_array[0] == "musique"):
+            play_musique()
+        elif (word_array[0] == "noter"):
+            write_note()
+        elif ("note" in result):
+            read_note()
+        elif (word_array[0] == "capture" and word_array[1] == "d'écran"):
+            os.system("ffmpeg -f x11grab -r 25 -s 1920x1080 -i :0.0 /home/khadafi/delivery/J.A.R.V.I.S/save/cap.png")
+            say("Capture d'écran terminer")
+        elif ("système" in result):
             infocomputer()
+        system_interaction(word_array[0])
 
-if (__name__ == "__main__"):
-    main()
+        
